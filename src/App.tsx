@@ -70,19 +70,19 @@ const App = () => {
     <>
       <header>
         <h1>SpaceX Missions</h1>
-        <div className="button-group">
-          {missions && (
-            <>
-              <button type="button" onClick={() => handleLocationBasedFilter(missions)}>Filter by (European) coverage area</button>
-              <button type="button" onClick={() => handleAlphabetizedSort(missions)}>Sort alphabetically by mission name</button>
-              <button type="button" onClick={() => getMissions()}>Reset Missions!</button>
-            </>
-          )}
-        </div>
+        {missions && (
+          <div className="button-group">
+            <button type="button" onClick={() => handleLocationBasedFilter(missions)}>Filter by (European) coverage area</button>
+            <button type="button" onClick={() => handleAlphabetizedSort(missions)}>Sort alphabetically by mission name</button>
+            <button type="button" onClick={() => getMissions()}>Reset Missions!</button>
+          </div>
+        )}
       </header>
-      <div className="error-messaging">
-        {error && "Something went wrong ... Check back again soon!"}
-      </div>
+      {error && (
+        <div className="error-messaging">
+          Something went wrong ... Check back again soon!
+        </div>
+      )}
       {loading || !missions ? (<p>Loading...</p>) :
         missions.map(mission => (
           <div key={mission.id}>
