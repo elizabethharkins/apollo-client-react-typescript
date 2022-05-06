@@ -1,9 +1,12 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { arrayDataIsVerified } from "./utils";
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+const bowieAlbums = [
+  "Space Oddity",
+  "The Man Who Sold the World",
+  "Hunky Dory",
+  "Ziggy Stardust"
+];
+
+test("validates array data", () => {
+  expect(arrayDataIsVerified(bowieAlbums)).toBeTruthy();
 });

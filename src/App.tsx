@@ -1,25 +1,99 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import { useQuery, gql } from "@apollo/client";
+import { arrayDataIsVerified } from "./utils";
 
-function App() {
+interface MissionsData {
+  id: string;
+  name: string;
+  wikipedia: string;
+  description: string;
+}
+
+interface MissionsResult {
+  missions: Array<MissionsData>;
+}
+
+const MISSIONS = gql`
+  query GetMissions {
+    missions {
+      id
+      name
+      wikipedia
+      description
+    }
+  }
+`;
+
+const App = () => {
+  const { loading, error, data } = useQuery<MissionsResult>(MISSIONS);
+  const [missions, setMissions] = useState(data?.missions)
+
+  const getMissions = () => {
+    setMissions(data?.missions);
+  }
+
+  useEffect(() => {
+    getMissions();
+    console.log(missions)
+  }, [getMissions]);
+
+  useEffect(() => {
+    setMissions(missions)
+  }, [missions])
+  
+  const handleAlphabetizedSort = (arr: any) => {
+    if (!arrayDataIsVerified(arr)) return;
+
+    const missionsSortedAlphabeticallyByName = [...arr].sort((a: any, b: any) => {
+      return a.name === b.name ? 0 : a.name < b.name ? -1 : 1;
+    });
+
+    setMissions(missionsSortedAlphabeticallyByName)
+  }
+
+  const handleLocationBasedFilter = (arr: any) => {
+    if (!arrayDataIsVerified(arr)) return;
+
+    const keyword = "European";
+    const missionsFilteredByCoverageArea = [];
+
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].description.includes(keyword)) {
+        missionsFilteredByCoverageArea.push(arr[i]);
+      }
+    }
+
+    setMissions(missionsFilteredByCoverageArea)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <>
+      <header>
+        <h1>SpaceX Missions</h1>
+        <div className="button-group">
+          {missions && (
+            <>
+              <button type="button" onClick={() => handleLocationBasedFilter(missions)}>Filter by (European) coverage area</button>
+              <button type="button" onClick={() => handleAlphabetizedSort(missions)}>Sort alphabetically by mission name</button>
+              <button type="button" onClick={() => getMissions()}>Reset Missions!</button>
+            </>
+          )}
+        </div>
       </header>
-    </div>
+      <div className="error-messaging">
+        {error && "Something went wrong ... Check back again soon!"}
+      </div>
+      {loading || !missions ? (<p>Loading...</p>) :
+        missions.map(mission => (
+          <div key={mission.id}>
+            <h2><a href={mission.wikipedia}>{mission.name}</a></h2>
+            <p><b>Description</b>: {mission.description}</p>
+            <p><b>Wikipedia</b>: <a href={mission.wikipedia}>{mission.wikipedia}</a></p>
+          </div>
+        ))
+      }
+    </>
   );
 }
 
