@@ -27,7 +27,7 @@ const MISSIONS = gql`
 
 const App = () => {
   const { loading, error, data } = useQuery<MissionsResult>(MISSIONS);
-  const [missions, setMissions] = useState(data?.missions)
+  const [missions, setMissions] = useState(data?.missions);
 
   const getMissions = () => {
     setMissions(data?.missions);
@@ -35,7 +35,6 @@ const App = () => {
 
   useEffect(() => {
     getMissions();
-    console.log(missions)
   }, [getMissions]);
 
   useEffect(() => {
@@ -49,7 +48,7 @@ const App = () => {
       return a.name === b.name ? 0 : a.name < b.name ? -1 : 1;
     });
 
-    setMissions(missionsSortedAlphabeticallyByName)
+    setMissions(missionsSortedAlphabeticallyByName);
   }
 
   const handleLocationBasedFilter = (arr: any) => {
@@ -64,7 +63,7 @@ const App = () => {
       }
     }
 
-    setMissions(missionsFilteredByCoverageArea)
+    setMissions(missionsFilteredByCoverageArea);
   }
 
   return (
